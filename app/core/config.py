@@ -42,5 +42,12 @@ class Settings(BaseSettings):
         env_file = (".env", "../.env")  # backend/ 또는 프로젝트 루트 어느 위치에서 실행해도 로드
         extra = "ignore"
 
+    def __init__(self, **data):
+        super().__init__(**data)
+        # Convert postgresql:// to postgresql+asyncpg:// if needed
+        if self.DATABASE_URL.startswith("postgresql://"):
+            self.DATABASE_URL = self.DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+
 
 settings = Settings()
+
