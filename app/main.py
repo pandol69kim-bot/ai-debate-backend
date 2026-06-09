@@ -10,6 +10,7 @@ from app.api.routes import debate, models, judge, consensus, rankings, auth, adm
 from app.models import db_models
 
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
