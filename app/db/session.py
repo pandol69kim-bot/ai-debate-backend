@@ -2,11 +2,13 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 from sqlalchemy.orm import declarative_base
 from app.core.config import settings
 
-# DATABASE_URL이 postgresql+asyncpg://... 형식이어야 함
-# psycopg2 대신 asyncpg 또는 psycopg를 사용해야 함
+# DATABASE_URL을 asyncpg 형식으로 변환
+database_url = settings.DATABASE_URL
+if not database_url.startswith("postgresql+asyncpg://"):
+    database_url = database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
 
 engine = create_async_engine(
-    settings.DATABASE_URL,
+    database_url,
     echo=False,
     future=True,
     pool_pre_ping=True,
