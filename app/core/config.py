@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from typing import List
+import os
 
 
 class Settings(BaseSettings):
@@ -7,22 +8,22 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     DEBUG: bool = False
 
-    # Database (default: localhost for local dev; docker-compose overrides with service name)
-    DATABASE_URL: str = "postgresql+asyncpg://arena:arena_pass@localhost:5432/arena_db"
-    DATABASE_URL_SYNC: str = "postgresql://arena:arena_pass@localhost:5432/arena_db"
+    # Database
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql+asyncpg://arena:arena_pass@localhost:5432/arena_db")
+    DATABASE_URL_SYNC: str = os.getenv("DATABASE_URL_SYNC", "postgresql://arena:arena_pass@localhost:5432/arena_db")
 
-    # Redis (default: localhost for local dev; docker-compose overrides with service name)
-    REDIS_URL: str = "redis://localhost:6379/0"
+    # Redis
+    REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
     # Security
-    SECRET_KEY: str = "change-me-in-production-secret-key-at-least-32-chars"
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "change-me-in-production-secret-key-at-least-32-chars")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
     ALGORITHM: str = "HS256"
 
     # AI API Keys
-    OPENAI_API_KEY: str = ""
-    ANTHROPIC_API_KEY: str = ""
-    GOOGLE_API_KEY: str = ""
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+    ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
+    GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
 
     # AI Models
     OPENAI_MODEL: str = "gpt-4o"
@@ -39,15 +40,8 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://frontend:3000"]
 
     class Config:
-        env_file = (".env", "../.env")  # backend/ 또는 프로젝트 루트 어느 위치에서 실행해도 로드
+        env_file = (".env", "../.env")
         extra = "ignore"
-
-    def __init__(self, **data):
-        super().__init__(**data)
-        # Convert postgresql:// to postgresql+asyncpg:// if needed
-        if self.DATABASE_URL.startswith("postgresql://"):
-            self.DATABASE_URL = self.DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 
 
 settings = Settings()
-
