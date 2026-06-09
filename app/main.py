@@ -1,9 +1,13 @@
 import sys
 import traceback
+import os
 
 print("=" * 50)
 print("Starting application initialization...")
 print("=" * 50)
+print(f"Python version: {sys.version}")
+print(f"Working directory: {os.getcwd()}")
+print(f"PYTHONPATH: {os.environ.get('PYTHONPATH', 'Not set')}")
 
 try:
     print("[1/5] Importing FastAPI...")
@@ -85,4 +89,6 @@ async def health():
 
 print("=" * 50)
 print("✓ Application initialized successfully!")
+print(f"✓ App instance: {app}")
+print(f"✓ Ready to accept requests on 0.0.0.0:8000")
 print("=" * 50)
